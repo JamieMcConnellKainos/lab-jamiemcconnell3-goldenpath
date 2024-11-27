@@ -7,19 +7,19 @@ terraform {
     key                  = "terraform.tfstate"
   }
 }
- 
+
 provider "azurerm" {
   features {}
 }
- 
+
 data "azurerm_client_config" "current" {}
- 
+
 #Create Resource Group
 resource "azurerm_resource_group" "tamops" {
   name     = "tamopstfstates"
   location = "uksouth"
 }
- 
+
 #Create Virtual Network
 resource "azurerm_virtual_network" "vnet" {
   name                = "tamops-vnet"
@@ -27,7 +27,7 @@ resource "azurerm_virtual_network" "vnet" {
   location            = "uksouth"
   resource_group_name = azurerm_resource_group.tamops.name
 }
- 
+
 # Create Subnet
 resource "azurerm_subnet" "subnet" {
   name                 = "subnet"

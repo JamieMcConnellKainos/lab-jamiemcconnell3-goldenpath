@@ -1,11 +1,11 @@
 name: 'Terraform'
- 
+
 on:
   push:
     branches:
-    - main
+      - main
   pull_request:
- 
+
 jobs:
   terraform:
     name: 'Terraform'
@@ -17,49 +17,53 @@ jobs:
       TF_VERSION: 1.5.7
     runs-on: ubuntu-latest
     environment: production
- 
-    # Use the Bash shell regardless of whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+
     defaults:
       run:
         shell: bash
- 
+
     steps:
-    # Checkout the repository to the GitHub Actions runner
+    # Checkout the repository
     - name: Checkout
       uses: actions/checkout@v2
- 
+
+    # Automatically format Terraform files
     - name: 'Terraform Format'
       uses: hashicorp/terraform-github-actions@master
       with:
         tf_actions_version: ${{ env.TF_VERSION }}
         tf_actions_subcommand: 'fmt'
-        tf_actions_working_dir: "./Users/jamiemcconnell/lab-JamieMcConnell-goldenpath"
-         
+        tf_actions_working_dir: './components/lab' # Replace with the actual relative path
+
+    # Initialize Terraform
     - name: 'Terraform Init'
       uses: hashicorp/terraform-github-actions@master
       with:
         tf_actions_version: ${{ env.TF_VERSION }}
         tf_actions_subcommand: 'init'
-        tf_actions_working_dir: "./Users/jamiemcconnell/lab-JamieMcConnell-goldenpath"
- 
+        tf_actions_working_dir: './components/lab'
+
+    # Validate Terraform configuration
     - name: 'Terraform Validate'
       uses: hashicorp/terraform-github-actions@master
       with:
         tf_actions_version: ${{ env.TF_VERSION }}
         tf_actions_subcommand: 'validate'
-        tf_actions_working_dir: "./Users/jamiemcconnell/lab-JamieMcConnell-goldenpath"
-         
+        tf_actions_working_dir: './components/lab'
+
+    # Generate Terraform plan
     - name: 'Terraform Plan'
       uses: hashicorp/terraform-github-actions@master
       with:
         tf_actions_version: ${{ env.TF_VERSION }}
         tf_actions_subcommand: 'plan'
-        tf_actions_working_dir: "./Users/jamiemcconnell/lab-JamieMcConnell-goldenpath"
- 
+        tf_actions_working_dir: './components/lab'
+
+    # Apply Terraform changes (manual trigger for safety)
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/main'
+      if: github.event_name == 'workflow_dispatch'
       uses: hashicorp/terraform-github-actions@master
       with:
         tf_actions_version: ${{ env.TF_VERSION }}
         tf_actions_subcommand: 'apply'
-        tf_actions_working_dir: "./Users/jamiemcconnell/lab-JamieMcConnell-goldenpath"
+        tf_actions_working_dir: './components/lab'
